@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_list/Models/notes_operation.dart';
+import 'package:todo_list/Models/note.dart';
 import 'package:todo_list/screen/add_screen.dart';
+import 'package:todo_list/screen/edit_screen.dart';
 import 'package:todo_list/screen/notes_card.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  const HomeScreen({Key? key});
 
   @override
   Widget build(BuildContext context) {
+    Provider.of<NotesOperation>(context, listen: false).getNotesFromDatabase();
+
     return Scaffold(
       backgroundColor: Colors.blueGrey,
       floatingActionButton: FloatingActionButton(
@@ -19,7 +23,7 @@ class HomeScreen extends StatelessWidget {
               builder: (context) => const AddScreen(),
             ),
           );
-        },        
+        },
         backgroundColor: Colors.white,
         child: const Icon(Icons.add, size: 30, color: Colors.blueGrey),
       ),
@@ -40,11 +44,21 @@ class HomeScreen extends StatelessWidget {
           return ListView.builder(
             itemCount: data.getNotes.length,
             itemBuilder: (context, index) {
-              return NotesCard(note: data.getNotes[index]);
-            }
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditScreen(note: data.getNotes[index]),
+                    ),
+                  );
+                },
+                child: NotesCard(note: data.getNotes[index]),
+              );
+            },
           );
         },
-      )
+      ),
     );
   }
 }
