@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_list/Models/note.dart';
+import 'package:todo_list/Models/notes_operation.dart';
+import 'package:todo_list/helpers/dbhelper.dart';
 
 class NotesCard extends StatelessWidget {
   final Note note;
-  const NotesCard({super.key, required this.note});
+  const NotesCard({Key? key, required this.note});
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +29,20 @@ class NotesCard extends StatelessWidget {
           Text(
             note.description,
             style: const TextStyle(fontSize: 17),
+          ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              IconButton(
+                onPressed: () async {
+                  await dbhelper.instance.delete(note);
+                  Provider.of<NotesOperation>(context, listen: false)
+                      .getNotesFromDatabase();
+                },
+                icon: Icon(Icons.delete, color: Colors.red),
+              ),
+            ],
           ),
         ],
       ),
